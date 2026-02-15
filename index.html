@@ -287,12 +287,12 @@
                                 {/* Container matching Main Logo width (292px) */}
                                 <div style={{ width: '292px', maxWidth: '100%' }} className="flex flex-col items-start gap-2">
                                     
-                                    {/* OQEP Logo (30% width) */}
+                                    {/* OQEP Logo (30% width) - Raised 100px */}
                                     <img 
                                         src="./oqep.png" 
                                         alt="OQEP"
                                         onError={(e) => { e.target.style.display = 'none'; }}
-                                        style={{ width: '30%', height: 'auto', objectFit: 'contain' }} 
+                                        style={{ width: '30%', height: 'auto', objectFit: 'contain', transform: 'translateY(-100px)' }} 
                                     />
                                     
                                     {/* Main Logo */}
