@@ -8,8 +8,8 @@
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+    <!-- Google Fonts: IBM Plex Sans Arabic & Montserrat -->
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;700&family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
     
     <!-- React & ReactDOM -->
     <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
@@ -24,6 +24,10 @@
         @keyframes scale-up { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
         .animate-fade-in { animation: fade-in 0.4s ease-out forwards; }
         .animate-scale-up { animation: scale-up 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
+        
+        /* Font Classes */
+        .font-ar { font-family: 'IBM Plex Sans Arabic', sans-serif; }
+        .font-en { font-family: 'Montserrat', sans-serif; }
     </style>
 </head>
 <body>
@@ -51,11 +55,11 @@
             text: {
                 color: '#FFFFFF', 
                 x: 540,
-                y: 890,
-                fontSizeEn: 30, 
-                fontSizeAr: 30,
+                y: 895,
+                fontSizeEn: 50, 
+                fontSizeAr: 50,
                 fontFamilyEn: 'Montserrat',
-                fontFamilyAr: 'Cairo',
+                fontFamilyAr: 'IBM Plex Sans Arabic',
                 shadowColor: 'rgba(0,0,0,0.3)',
                 shadowBlur: 10
             }
@@ -281,28 +285,32 @@
 
                     <div className="relative z-10 w-full max-w-md p-4 flex flex-col items-center">
                         
-                        {/* LOGO SECTION - Only on Step 1 & 2 */}
+                        {/* OQEP LOGO (Corner Left) - Scaled 15% more (approx 120px) */}
                         {step !== 3 && (
-                            <div className="mb-8 w-full flex justify-center">
-                                {/* Container matching Main Logo width (292px) */}
-                                <div style={{ width: '292px', maxWidth: '100%' }} className="flex flex-col items-start gap-2">
-                                    
-                                    {/* OQEP Logo (30% width) - Raised 100px */}
-                                    <img 
-                                        src="./oqep.png" 
-                                        alt="OQEP"
-                                        onError={(e) => { e.target.style.display = 'none'; }}
-                                        style={{ width: '30%', height: 'auto', objectFit: 'contain', transform: 'translateY(-100px)' }} 
-                                    />
-                                    
-                                    {/* Main Logo */}
-                                    <img 
-                                        src="./logo.png" 
-                                        alt="Logo"
-                                        onError={(e) => { e.target.style.display = 'none'; setLogoError(true); }}
-                                        style={{ width: '100%', height: 'auto', maxHeight: '127px', objectFit: 'contain' }} 
-                                    />
-                                </div>
+                            <img 
+                                src="./oqep.png" 
+                                alt="OQEP"
+                                onError={(e) => { e.target.style.display = 'none'; }}
+                                style={{ 
+                                    position: 'absolute',
+                                    top: '20px',
+                                    left: '20px',
+                                    width: '120px', 
+                                    height: 'auto', 
+                                    objectFit: 'contain'
+                                }} 
+                            />
+                        )}
+
+                        {/* MAIN LOGO - Centered */}
+                        {step !== 3 && (
+                            <div className="mb-8 mt-12 w-full flex justify-center">
+                                <img 
+                                    src="./logo.png" 
+                                    alt="Logo"
+                                    onError={(e) => { e.target.style.display = 'none'; setLogoError(true); }}
+                                    style={{ width: '292px', maxWidth: '100%', height: 'auto', maxHeight: '127px', objectFit: 'contain' }} 
+                                />
                                 {logoError && <div className="text-white/50 border border-white/30 p-4 rounded text-center">logo.png not found</div>}
                             </div>
                         )}
@@ -317,7 +325,7 @@
                                         <span className="text-sm text-white/70 group-hover:text-[#13647a]">English</span>
                                     </button>
                                     <button onClick={() => { setLanguage('ar'); setStep(2); }} className="p-6 rounded-2xl bg-white/10 hover:bg-white hover:text-[#13647a] transition-all border border-white/20 group">
-                                        <span className="text-2xl font-bold block mb-2 font-['Cairo'] text-white group-hover:text-[#13647a]">عربي</span>
+                                        <span className="text-2xl font-bold block mb-2 font-ar text-white group-hover:text-[#13647a]">عربي</span>
                                         <span className="text-sm text-white/70 group-hover:text-[#13647a]">Arabic</span>
                                     </button>
                                 </div>
@@ -328,10 +336,10 @@
                         {step === 2 && (
                             <div className="w-full bg-white/10 backdrop-blur-md border border-white/20 p-8 rounded-3xl shadow-xl animate-fade-in">
                                 <button onClick={() => setStep(1)} className="mb-6 text-sm text-white/60 hover:text-white flex items-center gap-1 transition-colors">← Back</button>
-                                <h2 className={`text-xl font-bold mb-6 text-white ${isRTL ? 'text-right font-[Cairo]' : ''}`}>{ui.enterName[language]}</h2>
+                                <h2 className={`text-xl font-bold mb-6 text-white ${isRTL ? 'text-right font-ar' : ''}`}>{ui.enterName[language]}</h2>
                                 <div className="relative mb-8 group">
                                     <input type="text" value={name} onChange={(e) => setName(e.target.value)} placeholder={ui.placeholder[language]} dir={isRTL ? 'rtl' : 'ltr'}
-                                        className={`w-full bg-black/20 border-2 border-white/20 focus:border-white rounded-xl px-4 py-4 text-2xl text-white outline-none transition-all placeholder:text-white/30 ${isRTL ? 'font-[Cairo] text-right' : 'font-[Montserrat] text-left'}`} autoFocus />
+                                        className={`w-full bg-black/20 border-2 border-white/20 focus:border-white rounded-xl px-4 py-4 text-2xl text-white outline-none transition-all placeholder:text-white/30 ${isRTL ? 'font-ar text-right' : 'font-en text-left'}`} autoFocus />
                                 </div>
 
                                 <button onClick={handleGenerate} disabled={!name.trim() || isGenerating}
@@ -373,11 +381,6 @@
         root.render(<App />);
     </script>
 </body>
-
 </html>
-
-
-
-
 
 
