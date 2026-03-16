@@ -56,10 +56,8 @@
                 color: '#FFFFFF', 
                 x: 540,
                 y: 890,
-                fontSizeEn: 30, 
-                fontSizeAr: 30,
-                fontFamilyEn: 'Montserrat',
-                fontFamilyAr: 'IBM Plex Sans Arabic',
+                fontSize: 30, 
+                fontFamily: 'IBM Plex Sans Arabic',
                 shadowColor: 'rgba(0,0,0,0.3)',
                 shadowBlur: 10
             }
@@ -143,8 +141,8 @@
 
         // --- MAIN APP ---
         function App() {
+            // step 1 = Input, step 2 = Result Preview
             const [step, setStep] = useState(1);
-            const [language, setLanguage] = useState('en');
             const [name, setName] = useState('');
             const [generatedImage, setGeneratedImage] = useState(null);
             const [isGenerating, setIsGenerating] = useState(false);
@@ -175,11 +173,8 @@
                     ctx.textAlign = 'center';
                     ctx.textBaseline = 'middle';
                     
-                    const isAr = language === 'ar';
-                    const fontSize = isAr ? text.fontSizeAr : text.fontSizeEn;
-                    const fontFamily = isAr ? text.fontFamilyAr : text.fontFamilyEn;
-                    
-                    ctx.font = `bold ${fontSize}px "${fontFamily}"`;
+                    // IBM Plex Sans Arabic supports both English and Arabic gracefully
+                    ctx.font = `bold ${text.fontSize}px "${text.fontFamily}"`;
                     ctx.fillStyle = text.color;
                     
                     ctx.shadowColor = text.shadowColor;
@@ -192,7 +187,7 @@
                     try {
                         const dataUrl = canvas.toDataURL('image/png', 1.0);
                         setGeneratedImage(dataUrl);
-                        setStep(3);
+                        setStep(2); // Move to Result step
                         setIsGenerating(false);
                     } catch (e) {
                         console.error("Security Error:", e);
@@ -269,14 +264,14 @@
                 }
             };
 
-            const isRTL = language === 'ar';
+            // Unified UI text
             const ui = {
-                enterName: { en: 'Enter Name', ar: 'أدخل الاسم' },
-                placeholder: { en: 'Type here...', ar: 'اكتب هنا...' },
-                done: { en: 'Generate', ar: 'إرسال' },
-                download: { en: 'Download', ar: 'تحميل' },
-                share: { en: 'Share', ar: 'مشاركة' },
-                again: { en: 'New Card', ar: 'بطاقة جديدة' }
+                enterName: 'Enter your name / أدخل اسمك',
+                placeholder: 'Type here... / اكتب هنا...',
+                done: 'Generate / إرسال',
+                download: 'Download / تحميل',
+                share: 'Share / مشاركة',
+                again: 'New Card / بطاقة جديدة'
             };
 
             return (
@@ -285,8 +280,8 @@
 
                     <div className="relative z-10 w-full max-w-md p-4 flex flex-col items-center">
                         
-                        {/* OQEP LOGO (Corner Left) - Scaled 15% more (approx 120px) */}
-                        {step !== 3 && (
+                        {/* OQEP LOGO (Corner Left) */}
+                        {step !== 2 && (
                             <img 
                                 src="./oqep.png" 
                                 alt="OQEP"
@@ -303,7 +298,7 @@
                         )}
 
                         {/* MAIN LOGO - Centered */}
-                        {step !== 3 && (
+                        {step !== 2 && (
                             <div className="mb-8 mt-12 w-full flex justify-center">
                                 <img 
                                     src="./logo.png" 
@@ -315,60 +310,57 @@
                             </div>
                         )}
 
-                        {/* STEP 1 */}
+                        {/* STEP 1: INPUT */}
                         {step === 1 && (
-                            <div className="w-full bg-white/10 backdrop-blur-md border border-white/20 p-8 rounded-3xl shadow-xl animate-fade-in text-center">
-                                <h2 className="text-lg text-white mb-6 uppercase tracking-widest font-light">Select Language</h2>
-                                <div className="grid grid-cols-2 gap-4">
-                                    <button onClick={() => { setLanguage('en'); setStep(2); }} className="p-6 rounded-2xl bg-white/10 hover:bg-white hover:text-[#13647a] transition-all border border-white/20 group">
-                                        <span className="text-2xl font-bold block mb-2 text-white group-hover:text-[#13647a]">EN</span>
-                                        <span className="text-sm text-white/70 group-hover:text-[#13647a]">English</span>
-                                    </button>
-                                    <button onClick={() => { setLanguage('ar'); setStep(2); }} className="p-6 rounded-2xl bg-white/10 hover:bg-white hover:text-[#13647a] transition-all border border-white/20 group">
-                                        <span className="text-2xl font-bold block mb-2 font-ar text-white group-hover:text-[#13647a]">عربي</span>
-                                        <span className="text-sm text-white/70 group-hover:text-[#13647a]">Arabic</span>
-                                    </button>
-                                </div>
-                            </div>
-                        )}
-
-                        {/* STEP 2 */}
-                        {step === 2 && (
                             <div className="w-full bg-white/10 backdrop-blur-md border border-white/20 p-8 rounded-3xl shadow-xl animate-fade-in">
-                                <button onClick={() => setStep(1)} className="mb-6 text-sm text-white/60 hover:text-white flex items-center gap-1 transition-colors">← Back</button>
-                                <h2 className={`text-xl font-bold mb-6 text-white ${isRTL ? 'text-right font-ar' : ''}`}>{ui.enterName[language]}</h2>
+                                <h2 className="text-xl font-bold mb-6 text-white text-center leading-relaxed">
+                                    <span className="font-ar block mb-1" dir="rtl">{ui.enterName.split(' / ')[1]}</span>
+                                    <span className="font-en text-lg text-white/90">{ui.enterName.split(' / ')[0]}</span>
+                                </h2>
+                                
                                 <div className="relative mb-8 group">
-                                    <input type="text" value={name} onChange={(e) => setName(e.target.value)} placeholder={ui.placeholder[language]} dir={isRTL ? 'rtl' : 'ltr'}
-                                        className={`w-full bg-black/20 border-2 border-white/20 focus:border-white rounded-xl px-4 py-4 text-2xl text-white outline-none transition-all placeholder:text-white/30 ${isRTL ? 'font-ar text-right' : 'font-en text-left'}`} autoFocus />
+                                    <input 
+                                        type="text" 
+                                        value={name} 
+                                        onChange={(e) => setName(e.target.value)} 
+                                        placeholder={ui.placeholder} 
+                                        dir="auto"
+                                        className="w-full bg-black/20 border-2 border-white/20 focus:border-white rounded-xl px-4 py-4 text-2xl text-white outline-none transition-all placeholder:text-white/30 font-ar text-center" 
+                                        autoFocus 
+                                    />
                                 </div>
 
                                 <button onClick={handleGenerate} disabled={!name.trim() || isGenerating}
                                     className={`w-full py-4 rounded-xl font-bold text-lg shadow-lg flex items-center justify-center gap-2 transition-all transform active:scale-95 ${name.trim() ? 'bg-white text-[#13647a] hover:bg-gray-100' : 'bg-black/20 text-white/30'}`}>
-                                    {isGenerating ? <IconRefresh className="animate-spin" /> : ui.done[language]}
+                                    {isGenerating ? <IconRefresh className="animate-spin" /> : <span className="font-ar">{ui.done}</span>}
                                 </button>
                                 
                                 {statusMsg && <div className="mt-4 text-center text-sm text-white/80 animate-pulse">{statusMsg}</div>}
                             </div>
                         )}
 
-                        {/* STEP 3 */}
-                        {step === 3 && generatedImage && (
+                        {/* STEP 2: RESULT PREVIEW */}
+                        {step === 2 && generatedImage && (
                             <div className="flex flex-col items-center animate-scale-up w-full">
                                 {bgError && <div className="w-full bg-orange-500/80 text-white px-4 py-2 rounded-lg mb-4 text-xs text-center font-bold">bg.png not found</div>}
+                                
                                 <div className="relative w-3/4 md:w-2/3 rounded-lg overflow-hidden shadow-2xl border border-white/20 mb-6 bg-black mx-auto" style={{ aspectRatio: '1080/1350' }}>
                                     <img src={generatedImage} className="w-full h-full object-contain" alt="Card" />
                                 </div>
+                                
                                 <div className="grid grid-cols-2 gap-3 w-full mb-4">
                                     <button onClick={downloadImage} className="bg-white text-[#13647a] py-3 rounded-xl font-bold flex items-center justify-center gap-2 hover:bg-gray-100 transition-colors shadow-lg active:scale-95">
-                                        <IconDownload /> {ui.download[language]}
+                                        <IconDownload /> <span className="font-ar text-sm">{ui.download}</span>
                                     </button>
                                     <button onClick={shareImage} className="bg-black/30 text-white py-3 rounded-xl font-bold flex items-center justify-center gap-2 hover:bg-black/50 transition-colors shadow-lg active:scale-95 border border-white/20">
-                                        <IconShare /> {ui.share[language]}
+                                        <IconShare /> <span className="font-ar text-sm">{ui.share}</span>
                                     </button>
                                 </div>
+                                
                                 {statusMsg && <div className="mb-4 text-sm text-center text-white font-medium bg-black/20 py-1 px-3 rounded-full animate-pulse">{statusMsg}</div>}
+                                
                                 <button onClick={() => { setStep(1); setName(''); setStatusMsg(''); }} className="text-white/60 hover:text-white flex items-center gap-2 text-sm mt-2">
-                                    <IconRefresh size={14} /> {ui.again[language]}
+                                    <IconRefresh size={14} /> <span className="font-ar">{ui.again}</span>
                                 </button>
                             </div>
                         )}
@@ -382,5 +374,3 @@
     </script>
 </body>
 </html>
-
-
